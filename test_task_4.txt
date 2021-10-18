@@ -1,0 +1,42 @@
+#1.
+CREATE DATABASE test_task_4 CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE test_task_4;
+
+
+#2.
+CREATE TABLE USER(
+id INT(11) PRIMARY KEY,
+NAME VARCHAR(255) COMMENT 'Имя покупателя',
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE orders(
+  id INT(11) PRIMARY KEY,
+  user_id INT(11),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY(user_id) REFERENCES test_task_4.user(id),
+  KEY index_of_user_id(user_id)
+);
+
+
+#3. 
+INSERT INTO user(id, name) VALUES(default, 'test1');
+INSERT INTO user(id, name) VALUES(default, 'test2');
+INSERT INTO user(id, name) VALUES(default, 'test3');
+INSERT INTO user(id, name) VALUES(default, 'test4');
+INSERT INTO user(id, name) VALUES(default, 'test5');
+
+INSERT INTO orders(id, user_id) VALUES(DEFAULT, 1);
+INSERT INTO orders(id, user_id) VALUES(DEFAULT, 2);
+INSERT INTO orders(id, user_id) VALUES(DEFAULT, 3);
+INSERT INTO orders(id, user_id) VALUES(DEFAULT, 2);
+INSERT INTO orders(id, user_id) VALUES(DEFAULT, 3);
+
+
+
+#4
+SELECT u.*, COUNT(o.id) AS kol_zakaz FROM test_task_4.user u
+LEFT JOIN orders o ON u.id=o.user_id
+GROUP BY o.user_id HAVING kol_zakaz > 0;
