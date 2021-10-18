@@ -10,15 +10,18 @@ class BookController extends \yii\rest\ActiveController
 {
     public $modelClass = 'app\models\Book';
 
-    private function errorResponse($message) {
+    private function errorResponse($message)
+    {
 
         // set response code to 400
         \Yii::$app->response->statusCode = 400;
 
         return $this->asJson(['error' => $message]);
     }
+
     //1.Список книг автора (идентификатор автора передавать в параметре).
-    public function actionAuthorBooks($author_id){
+    public function actionAuthorBooks($author_id)
+    {
         $author_books = Book::find()
             ->leftJoin('book_author', 'book.id=book_author.book_id')
             ->where(['book_author.author_id' => $author_id])->all();
@@ -27,16 +30,17 @@ class BookController extends \yii\rest\ActiveController
 
 
     //2.Удаление книги автора.
-    public function actionDeleteBookByAuthor($author_id){
+    public function actionDeleteBookByAuthor($author_id)
+    {
 
         $author_books = BookAuthor::find()
             ->select('book_id')
             ->where(['author_id' => $author_id])
             ->asArray()->all();
 
-        if(Book::deleteAll(['IN', 'id', array_values($author_books)])){
+        if (Book::deleteAll(['IN', 'id', array_values($author_books)])) {
             return $this->asJson(['status' => 200, 'message' => 'Success deleted!']);
-        }else{
+        } else {
             return $this->asJson(['status' => 400, 'message' => 'Error!']);
         }
     }
@@ -44,13 +48,24 @@ class BookController extends \yii\rest\ActiveController
 
     //3.Возможность смены автора книги.
 
-    public function actionChangeBookAuthor($book_id, $from_author_id, $to_author_id){
+    public function actionChangeBookAuthor($book_id, $from_author_id, $to_author_id)
+    {
         $book = Book::findOne($book_id);
 
-        if($book->changeBookAuthor($book_id,$from_author_id,$to_author_id)){
+        if ($book->changeBookAuthor($book_id, $from_author_id, $to_author_id)) {
             return $this->asJson(['status' => 200, 'message' => 'Success changed!']);
-        }else{
+        } else {
             return $this->asJson(['status' => 400, 'message' => 'Error!']);
         }
+    }
+    //4.Создание новой книги автора
+    public function actionCreate()
+    {
+        $model = new Book();
+
+        if ($model->load(\Yii::$app->request->post()) && $model->save()) {
+            return $this->asJson(['status' => 200, 'message' => 'Success changed!']);
+        }
+        return $this->asJson(['status' => 400, 'message' => 'Error!']);
     }
 }

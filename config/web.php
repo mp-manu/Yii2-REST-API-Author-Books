@@ -58,6 +58,7 @@ $config = [
                 'GET author-books/<author_id:\d+>' => 'book/author-books',
                 'GET delete-book-by-author/<author_id:\d+>' => 'book/delete-book-by-author',
                 'GET change-book-author/<book_id:\d+>/<from_author_id:\d+>/<to_author_id:\d+>' => 'book/change-book-author',
+                'POST book/create' => 'book/create',
             ],
         ],
     ],
